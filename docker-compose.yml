@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - sd-host
+
+  sd-host:
+    build: ./sd_host
+    container_name: sd-host
+    ports:
+      - "9000:9000"
+
+  frontend:
+    build: ./backend/frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

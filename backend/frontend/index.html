@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Local AI Studio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>🎬 Local AI Studio</h1>
+      <p>Text → Image → Video (Local)</p>
+    </header>
+
+    <main>
+      <textarea id="prompt" placeholder="Describe your scene..."></textarea>
+
+      <div class="controls">
+        <button onclick="generate()">Generate</button>
+        <span id="status"></span>
+      </div>
+
+      <div class="output">
+        <img id="result" />
+      </div>
+
+      <div class="hint">
+        ⚠️ First generation may take 1–2 minutes on CPU.
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
