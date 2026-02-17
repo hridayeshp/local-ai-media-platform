@@ -8,6 +8,7 @@ Hybrid media generation platform with a static web frontend, a FastAPI backend, 
 - After pushing to `main`, GitHub Actions deploys it via `.github/workflows/pages.yml`.
 - Enable Pages in repo settings if needed:
   - `Settings -> Pages -> Build and deployment -> Source: GitHub Actions`
+- Live URL (after deployment): `https://hridayeshp.github.io/local-ai-media-platform/`
 - Add `docs/assets/demo.mp4` to show a real walkthrough video on the live page.
 
 ## Project Structure
