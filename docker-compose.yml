@@ -1,22 +1,68 @@
 services:
   backend:
-    build: ./backend
+    build: ./services/backend
     container_name: backend
+    restart: unless-stopped
+    environment:
+      - SD_HOST=${SD_HOST:-http://sd-host:9000}
+      - SD_STARTUP_TIMEOUT_SECONDS=${SD_STARTUP_TIMEOUT_SECONDS:-300}
+      - SD_HEALTH_TIMEOUT_SECONDS=${SD_HEALTH_TIMEOUT_SECONDS:-2}
+      - SD_GENERATE_TIMEOUT_SECONDS=${SD_GENERATE_TIMEOUT_SECONDS:-600}
+      - JOB_OUTPUT_DIR=${JOB_OUTPUT_DIR:-/app/runtime/jobs}
+      - EDITOR_RUNTIME_DIR=${EDITOR_RUNTIME_DIR:-/app/runtime/editor}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN:-}
+      - REPLICATE_MODEL_VERSION=${REPLICATE_MODEL_VERSION:-}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+      - ELEVENLABS_VOICE_ID=${ELEVENLABS_VOICE_ID:-}
+      - ELEVENLABS_MODEL_ID=${ELEVENLABS_MODEL_ID:-eleven_multilingual_v2}
+    volumes:
+      - backend_outputs:/app/runtime
     ports:
       - "8000:8000"
     depends_on:
-      - sd-host
+      sd-host:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   sd-host:
-    build: ./sd_host
+    build: ./services/sd_host
     container_name: sd-host
+    restart: unless-stopped
+    environment:
+      - SD_MODEL_ID=${SD_MODEL_ID:-runwayml/stable-diffusion-v1-5}
+      - SD_DEVICE=${SD_DEVICE:-cpu}
+    volumes:
+      - hf_cache:/root/.cache/huggingface
     ports:
       - "9000:9000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request, json; data=json.loads(urllib.request.urlopen('http://localhost:9000/health', timeout=3).read().decode()); assert data.get('status') == 'ok'"]
+      interval: 20s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
 
   frontend:
-    build: ./backend/frontend
+    build: ./services/frontend
     container_name: frontend
+    restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  hf_cache:
+  backend_outputs:

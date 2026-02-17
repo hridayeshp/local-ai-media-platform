@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local AI Media Studio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <h1>Local AI Media Studio</h1>
+      <p>Prompt-to-video generation + lightweight timeline editor</p>
+    </header>
+
+    <section class="panel">
+      <h2>AI Generator</h2>
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" placeholder="A neon-lit city street in the rain, cinematic and dramatic."></textarea>
+
+      <label for="narration">Narration (optional)</label>
+      <textarea id="narration" placeholder="Voiceover text. Leave blank to use the prompt."></textarea>
+
+      <div class="toggles">
+        <label><input id="useReplicate" type="checkbox" checked /> Replicate (if configured)</label>
+        <label><input id="useElevenlabs" type="checkbox" checked /> ElevenLabs (if configured)</label>
+      </div>
+
+      <div class="controls">
+        <button id="generateBtn" onclick="startJob()">Generate Video</button>
+        <span id="status">Idle</span>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+        <span id="progressText">0%</span>
+      </div>
+
+      <div class="job-meta" id="jobMeta"></div>
+      <div class="output">
+        <video id="resultVideo" controls></video>
+        <a id="downloadLink" target="_blank" rel="noopener">Download generated MP4</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Video Editor (Phase 2)</h2>
+
+      <div class="editor-toolbar">
+        <label class="inline-label">
+          Upload assets
+          <input id="assetUpload" type="file" multiple />
+        </label>
+        <button onclick="uploadAssets()">Upload</button>
+        <button onclick="refreshAssets()">Refresh Assets</button>
+        <button onclick="addTrack('video')">+ Video Track</button>
+        <button onclick="addTrack('audio')">+ Audio Track</button>
+      </div>
+
+      <div class="editor-status" id="editorStatus">No assets loaded</div>
+
+      <div class="asset-grid" id="assetGrid"></div>
+
+      <div class="caption-controls">
+        <h3>Text / Captions</h3>
+        <div class="caption-row">
+          <input id="captionText" type="text" placeholder="Caption text" />
+          <input id="captionStart" type="number" step="0.1" min="0" placeholder="Start" />
+          <input id="captionEnd" type="number" step="0.1" min="0.1" placeholder="End" />
+          <input id="captionColor" type="text" value="white" />
+          <input id="captionSize" type="number" step="1" min="10" value="42" />
+          <button onclick="addCaption()">Add Caption</button>
+        </div>
+      </div>
+
+      <div class="timeline-wrap">
+        <div class="timeline-head">
+          <h3>Timeline</h3>
+          <div class="timeline-controls">
+            <label class="inline-label">Zoom (px/s)</label>
+            <input id="zoomSlider" type="range" min="40" max="220" step="5" value="90" oninput="setZoom(this.value)" />
+            <span id="zoomValue">90</span>
+            <label class="inline-label">Snap</label>
+            <input id="snapToggle" type="checkbox" checked onchange="toggleSnap(this.checked)" />
+            <select id="snapSelect" onchange="setSnapSeconds(this.value)">
+              <option value="0.1">0.1s</option>
+              <option value="0.25" selected>0.25s</option>
+              <option value="0.5">0.5s</option>
+              <option value="1">1s</option>
+            </select>
+          </div>
+        </div>
+        <div id="timelineRoot"></div>
+      </div>
+
+      <div class="inspector-wrap">
+        <h3>Clip Inspector</h3>
+        <div id="clipInspector" class="inspector">Select a clip in the timeline</div>
+      </div>
+
+      <div class="export-controls">
+        <h3>Export</h3>
+        <div class="export-row">
+          <input id="exportWidth" type="number" value="1280" min="320" step="2" />
+          <input id="exportHeight" type="number" value="720" min="240" step="2" />
+          <input id="exportFps" type="number" value="24" min="12" max="60" />
+          <button id="exportBtn" onclick="exportProject()">Export Timeline</button>
+        </div>
+        <div id="exportStatus" class="editor-status">No export yet</div>
+        <video id="exportVideo" controls></video>
+        <a id="exportDownloadLink" target="_blank" rel="noopener">Download timeline export</a>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
