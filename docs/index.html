@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Local AI Media Platform - Live Demo</title>
+  <meta name="description" content="Prompt-to-video generation and timeline editing demo for the Local AI Media Platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="bg-shape bg-shape-a"></div>
+  <div class="bg-shape bg-shape-b"></div>
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">GitHub Pages Demo</p>
+      <h1>Local AI Media Platform</h1>
+      <p class="subtitle">
+        Prompt-to-video generation, voiceover, and an interactive multi-track timeline editor.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://github.com/hridayeshp/local-ai-media-platform">View Repository</a>
+        <button class="btn btn-secondary" id="copyRunCmd">Copy Local Run Command</button>
+      </div>
+      <p class="copy-feedback" id="copyFeedback" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Quick Demo Video</h2>
+      <p>
+        Add your own screen recording at <code>docs/assets/demo.mp4</code> to show the real app flow on this page.
+      </p>
+      <video controls playsinline poster="./assets/demo-poster.svg">
+        <source src="./assets/demo.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h3>What This Live Page Shows</h3>
+        <ul>
+          <li>Project overview for visitors</li>
+          <li>Feature highlights (Phase 1 to Phase 3)</li>
+          <li>How to run the full app locally</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Important Limitation</h3>
+        <p>
+          GitHub Pages is static hosting only. The actual AI generation and editing backend still runs locally or on cloud infrastructure.
+        </p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Feature Snapshot</h2>
+      <div class="features">
+        <span>Prompt to Video Jobs</span>
+        <span>Replicate and ElevenLabs Integrations</span>
+        <span>Local Fallback Pipeline</span>
+        <span>Multi-Track Timeline</span>
+        <span>Trim, Split, Transitions</span>
+        <span>Audio Waveform Timeline</span>
+        <span>Caption Tracks</span>
+        <span>MP4 Export</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Run Locally</h2>
+      <pre><code id="runCmd">cd /Users/hridayeshpandit/Coding/local-ai-media-platform
+docker compose up --build -d
+# open http://localhost</code></pre>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

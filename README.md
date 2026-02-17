@@ -2,6 +2,14 @@
 
 Hybrid media generation platform with a static web frontend, a FastAPI backend, and a Stable Diffusion worker.
 
+## Live Demo Site
+
+- A GitHub Pages demo site is included under `docs/`.
+- After pushing to `main`, GitHub Actions deploys it via `.github/workflows/pages.yml`.
+- Enable Pages in repo settings if needed:
+  - `Settings -> Pages -> Build and deployment -> Source: GitHub Actions`
+- Add `docs/assets/demo.mp4` to show a real walkthrough video on the live page.
+
 ## Project Structure
 
 ```text

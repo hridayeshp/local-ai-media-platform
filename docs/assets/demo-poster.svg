@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0b1d2b"/>
+      <stop offset="100%" stop-color="#14354a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#0d8f72"/>
+      <stop offset="100%" stop-color="#f08a24"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <g opacity="0.22">
+    <circle cx="190" cy="160" r="180" fill="#41d8b7"/>
+    <circle cx="1070" cy="120" r="210" fill="#ffb571"/>
+  </g>
+  <rect x="140" y="170" width="1000" height="380" rx="22" fill="#0f2536" stroke="#2f5068" stroke-width="2"/>
+  <rect x="190" y="240" width="900" height="240" rx="14" fill="#0b1823" stroke="#2b4459"/>
+  <rect x="210" y="410" width="860" height="50" rx="8" fill="#13293b"/>
+  <rect x="240" y="420" width="250" height="30" rx="6" fill="#2f90ff"/>
+  <rect x="500" y="420" width="170" height="30" rx="6" fill="#f4c95d"/>
+  <rect x="678" y="420" width="210" height="30" rx="6" fill="#cf87ff"/>
+  <text x="640" y="218" text-anchor="middle" fill="#d9ebf5" font-size="44" font-family="Space Grotesk, Arial, sans-serif">
+    Local AI Media Platform
+  </text>
+  <text x="640" y="282" text-anchor="middle" fill="#9ac0d5" font-size="28" font-family="Space Grotesk, Arial, sans-serif">
+    Add docs/assets/demo.mp4 to show your walkthrough
+  </text>
+  <rect x="520" y="305" width="240" height="70" rx="10" fill="url(#accent)"/>
+  <polygon points="615,321 615,359 652,340" fill="#06231f"/>
+  <text x="690" y="347" fill="#06231f" font-size="24" font-family="Space Grotesk, Arial, sans-serif">Play Demo</text>
+</svg>
