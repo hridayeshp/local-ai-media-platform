@@ -35,7 +35,14 @@ services:
     restart: unless-stopped
     environment:
       - SD_MODEL_ID=${SD_MODEL_ID:-runwayml/stable-diffusion-v1-5}
-      - SD_DEVICE=${SD_DEVICE:-cpu}
+      - SD_DEVICE=${SD_DEVICE:-auto}
+      - SD_DEFAULT_STEPS=${SD_DEFAULT_STEPS:-24}
+      - SD_DEFAULT_GUIDANCE=${SD_DEFAULT_GUIDANCE:-7.0}
+      - SD_DEFAULT_WIDTH=${SD_DEFAULT_WIDTH:-512}
+      - SD_DEFAULT_HEIGHT=${SD_DEFAULT_HEIGHT:-512}
+      - SD_MAX_STEPS=${SD_MAX_STEPS:-50}
+      - SD_MAX_WIDTH=${SD_MAX_WIDTH:-1024}
+      - SD_MAX_HEIGHT=${SD_MAX_HEIGHT:-1024}
     volumes:
       - hf_cache:/root/.cache/huggingface
     ports:

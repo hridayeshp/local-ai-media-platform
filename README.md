@@ -81,6 +81,8 @@ Open `http://localhost`.
 - Services now use healthchecks and startup ordering, so `frontend` and `backend` wait for dependencies.
 - Hugging Face model cache is persisted in the `hf_cache` Docker volume to speed up subsequent runs.
 - Generated job outputs are persisted in the `backend_outputs` Docker volume.
+- `sd-host` now supports GPU auto-detection (`SD_DEVICE=auto`) and inference tuning via env vars.
+- For NVIDIA hosts, set `SD_DEVICE=cuda` to force CUDA when available.
 
 ## Environment
 
@@ -88,4 +90,5 @@ Use `.env.example` as a base:
 
 - `REPLICATE_API_TOKEN`, `REPLICATE_MODEL_VERSION` for cloud video generation
 - `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID` for cloud narration
+- `SD_DEVICE`, `SD_DEFAULT_STEPS`, `SD_DEFAULT_GUIDANCE`, `SD_DEFAULT_WIDTH`, `SD_DEFAULT_HEIGHT` for local image generation tuning
 - Without these keys, the system still works using local fallbacks.
