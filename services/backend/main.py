@@ -4,7 +4,7 @@ import time
 from typing import Optional
 
 import requests
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
@@ -140,7 +140,14 @@ def wait_for_sd_on_demand(timeout: int = SD_STARTUP_TIMEOUT_SECONDS) -> None:
     )
 
 
-def serialize_job(job: VideoJob) -> dict:
+def proxied_path(request: Request, path: str) -> str:
+    prefix = request.headers.get("x-forwarded-prefix", "").strip().rstrip("/")
+    if prefix and not prefix.startswith("/"):
+        prefix = f"/{prefix}"
+    return f"{prefix}{path}"
+
+
+def serialize_job(job: VideoJob, request: Request) -> dict:
     data = {
         "job_id": job.job_id,
         "prompt": job.prompt,
@@ -155,7 +162,7 @@ def serialize_job(job: VideoJob) -> dict:
         "download_url": None,
     }
     if job.status == "completed" and job.output_path:
-        data["download_url"] = f"/jobs/{job.job_id}/download"
+        data["download_url"] = proxied_path(request, f"/jobs/{job.job_id}/download")
     return data
 
 
@@ -202,7 +209,7 @@ def generate_image(data: GenerateImageRequest) -> dict:
 
 
 @app.post("/jobs/video")
-def create_video_job(data: CreateVideoJobRequest) -> dict:
+def create_video_job(data: CreateVideoJobRequest, request: Request) -> dict:
     wait_for_sd_on_demand()
     job = job_manager.submit(
         prompt=data.prompt,
@@ -213,24 +220,24 @@ def create_video_job(data: CreateVideoJobRequest) -> dict:
     return {
         "job_id": job.job_id,
         "status": job.status,
-        "poll_url": f"/jobs/{job.job_id}",
-        "download_url": f"/jobs/{job.job_id}/download",
+        "poll_url": proxied_path(request, f"/jobs/{job.job_id}"),
+        "download_url": proxied_path(request, f"/jobs/{job.job_id}/download"),
     }
 
 
 @app.get("/jobs")
-def list_jobs(limit: int = 25) -> dict:
+def list_jobs(request: Request, limit: int = 25) -> dict:
     limit = max(1, min(limit, 100))
-    jobs = [serialize_job(job) for job in job_manager.list_recent(limit=limit)]
+    jobs = [serialize_job(job, request) for job in job_manager.list_recent(limit=limit)]
     return {"jobs": jobs}
 
 
 @app.get("/jobs/{job_id}")
-def get_job(job_id: str) -> dict:
+def get_job(job_id: str, request: Request) -> dict:
     job = job_manager.get(job_id)
     if job is None:
         raise HTTPException(status_code=404, detail="Job not found")
-    return serialize_job(job)
+    return serialize_job(job, request)
 
 
 @app.get("/jobs/{job_id}/download")
@@ -289,7 +296,7 @@ def download_editor_asset(asset_id: str) -> FileResponse:
 
 
 @app.post("/editor/export")
-def export_editor_project(data: ProjectExportRequest) -> dict:
+def export_editor_project(data: ProjectExportRequest, request: Request) -> dict:
     payload = data.model_dump()
     try:
         result = export_project(payload, editor_store)
@@ -304,7 +311,7 @@ def export_editor_project(data: ProjectExportRequest) -> dict:
     return {
         "export_id": result.export_id,
         "duration": result.duration,
-        "download_url": f"/editor/exports/{result.export_id}/download",
+        "download_url": proxied_path(request, f"/editor/exports/{result.export_id}/download"),
     }
 
 

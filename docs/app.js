@@ -1,4 +1,5 @@
-const runCmd = `cd /Users/hridayeshpandit/Coding/local-ai-media-platform
+const runCmd = `git clone https://github.com/hridayeshp/local-ai-media-platform.git
+cd local-ai-media-platform
 docker compose up --build -d`;
 
 function setFeedback(message) {

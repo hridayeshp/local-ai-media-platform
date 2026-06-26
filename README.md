@@ -32,6 +32,13 @@ docker compose up --build
 
 Open `http://localhost`.
 
+For a fast smoke test that verifies the full stack without downloading Stable Diffusion
+weights, run:
+
+```bash
+SD_MOCK=true docker compose up --build
+```
+
 ## Phase 1 Features
 
 - Prompt to video job queue (`POST /api/jobs/video`)
@@ -77,6 +84,8 @@ Open `http://localhost`.
 ## Notes
 
 - First image generation can take a while on CPU because the model loads on startup.
+- The web app now starts while the model loads in the background; generation waits until
+  the image service reports ready.
 - `uploads/` and `ai_outputs/` are runtime directories and are intentionally excluded from git.
 - Services now use healthchecks and startup ordering, so `frontend` and `backend` wait for dependencies.
 - Hugging Face model cache is persisted in the `hf_cache` Docker volume to speed up subsequent runs.
@@ -91,4 +100,5 @@ Use `.env.example` as a base:
 - `REPLICATE_API_TOKEN`, `REPLICATE_MODEL_VERSION` for cloud video generation
 - `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID` for cloud narration
 - `SD_DEVICE`, `SD_DEFAULT_STEPS`, `SD_DEFAULT_GUIDANCE`, `SD_DEFAULT_WIDTH`, `SD_DEFAULT_HEIGHT` for local image generation tuning
+- `SD_MOCK=true` for local smoke tests without loading Stable Diffusion weights
 - Without these keys, the system still works using local fallbacks.

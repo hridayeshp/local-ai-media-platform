@@ -7,6 +7,7 @@ from typing import Optional
 import torch
 from diffusers import StableDiffusionPipeline
 from fastapi import FastAPI, HTTPException
+from PIL import Image, ImageDraw
 from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI()
@@ -14,9 +15,11 @@ app = FastAPI()
 pipe = None
 pipe_lock = threading.Lock()
 model_loaded = False
+model_error = None
 active_device = "cpu"
 active_dtype = "float32"
 
+SD_MOCK = os.getenv("SD_MOCK", "").strip().lower() in {"1", "true", "yes", "on"}
 SD_DEFAULT_STEPS = int(os.getenv("SD_DEFAULT_STEPS", "24"))
 SD_DEFAULT_GUIDANCE = float(os.getenv("SD_DEFAULT_GUIDANCE", "7.0"))
 SD_DEFAULT_WIDTH = int(os.getenv("SD_DEFAULT_WIDTH", "512"))
@@ -59,41 +62,74 @@ class GenerateRequest(BaseModel):
         return value
 
 
-@app.on_event("startup")
-def load_model():
-    global pipe, model_loaded, active_device, active_dtype
+def _mock_image(prompt: str, width: int, height: int) -> Image.Image:
+    image = Image.new("RGB", (width, height), color=(24, 28, 36))
+    draw = ImageDraw.Draw(image)
+    for y in range(height):
+        shade = int(24 + (y / max(1, height - 1)) * 80)
+        draw.line([(0, y), (width, y)], fill=(shade, 42, 88))
+    draw.rectangle((24, 24, width - 24, height - 24), outline=(180, 220, 255), width=4)
+    draw.text((40, 44), "SD_MOCK image", fill=(255, 255, 255))
+    draw.text((40, 76), prompt[:120], fill=(230, 235, 245))
+    return image
+
+
+def _load_model_sync() -> None:
+    global pipe, model_loaded, model_error, active_device, active_dtype
+    if SD_MOCK:
+        active_device = "mock"
+        active_dtype = "mock"
+        model_loaded = True
+        model_error = None
+        print("Stable Diffusion mock mode enabled")
+        return
+
     model_id = os.getenv("SD_MODEL_ID", "runwayml/stable-diffusion-v1-5")
     device = _resolve_device(os.getenv("SD_DEVICE", "auto"))
     torch_dtype = torch.float16 if device == "cuda" else torch.float32
 
-    if device == "cuda":
-        torch.backends.cuda.matmul.allow_tf32 = True
-        torch.backends.cudnn.benchmark = True
+    try:
+        if device == "cuda":
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.benchmark = True
 
-    pipe = StableDiffusionPipeline.from_pretrained(
-        model_id,
-        torch_dtype=torch_dtype,
-        use_safetensors=True,
-        safety_checker=None,
-    )
-    pipe = pipe.to(device)
-    pipe.enable_attention_slicing()
-    pipe.enable_vae_slicing()
+        loaded_pipe = StableDiffusionPipeline.from_pretrained(
+            model_id,
+            torch_dtype=torch_dtype,
+            use_safetensors=True,
+            safety_checker=None,
+        )
+        loaded_pipe = loaded_pipe.to(device)
+        loaded_pipe.enable_attention_slicing()
+        loaded_pipe.enable_vae_slicing()
 
-    active_device = device
-    active_dtype = "float16" if torch_dtype == torch.float16 else "float32"
-    model_loaded = True
-    print(f"✅ Stable Diffusion loaded and ready on {active_device} ({active_dtype})")
+        pipe = loaded_pipe
+        active_device = device
+        active_dtype = "float16" if torch_dtype == torch.float16 else "float32"
+        model_loaded = True
+        model_error = None
+        print(f"Stable Diffusion loaded and ready on {active_device} ({active_dtype})")
+    except Exception as exc:
+        model_loaded = False
+        model_error = str(exc)
+        print(f"Stable Diffusion failed to load: {model_error}")
+
+
+@app.on_event("startup")
+def startup_event():
+    threading.Thread(target=_load_model_sync, daemon=True).start()
 
 
 @app.get("/health")
 def health():
-    status = "ok" if model_loaded else "loading"
+    status = "ok" if model_loaded else "error" if model_error else "loading"
     return {
         "status": status,
         "model_loaded": model_loaded,
+        "model_error": model_error,
         "device": active_device,
         "dtype": active_dtype,
+        "mock": SD_MOCK,
         "defaults": {
             "steps": SD_DEFAULT_STEPS,
             "guidance": SD_DEFAULT_GUIDANCE,
@@ -105,12 +141,24 @@ def health():
 
 @app.post("/generate")
 def generate(req: GenerateRequest):
-    if not model_loaded or pipe is None:
+    if model_error:
+        raise HTTPException(status_code=503, detail=f"Model failed to load: {model_error}")
+    if not model_loaded:
         raise HTTPException(status_code=503, detail="Model is still loading")
 
     prompt = req.prompt.strip()
     if not prompt:
         raise HTTPException(status_code=400, detail="Prompt is required")
+
+    if SD_MOCK:
+        image = _mock_image(prompt, req.width, req.height)
+        buffer = BytesIO()
+        image.save(buffer, format="PNG")
+        image_b64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        return {"image_base64": image_b64}
+
+    if pipe is None:
+        raise HTTPException(status_code=503, detail="Model is still loading")
 
     generator = None
     if req.seed is not None:

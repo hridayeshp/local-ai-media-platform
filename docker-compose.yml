@@ -43,12 +43,13 @@ services:
       - SD_MAX_STEPS=${SD_MAX_STEPS:-50}
       - SD_MAX_WIDTH=${SD_MAX_WIDTH:-1024}
       - SD_MAX_HEIGHT=${SD_MAX_HEIGHT:-1024}
+      - SD_MOCK=${SD_MOCK:-false}
     volumes:
       - hf_cache:/root/.cache/huggingface
     ports:
       - "9000:9000"
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request, json; data=json.loads(urllib.request.urlopen('http://localhost:9000/health', timeout=3).read().decode()); assert data.get('status') == 'ok'"]
+      test: ["CMD", "python", "-c", "import urllib.request, json; data=json.loads(urllib.request.urlopen('http://localhost:9000/health', timeout=3).read().decode()); assert data.get('status') in {'loading', 'ok'}"]
       interval: 20s
       timeout: 5s
       retries: 20

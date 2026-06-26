@@ -166,6 +166,8 @@ class EditorAssetStore:
 
 
 def _clip_end(clip: Dict[str, Any]) -> float:
+    if clip.get("end") is not None:
+        return float(clip.get("end", 0.0))
     return float(clip.get("start", 0.0)) + float(clip.get("duration", 0.0))
 
 
