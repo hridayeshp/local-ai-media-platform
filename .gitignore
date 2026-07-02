@@ -19,3 +19,8 @@ venv311/
 ai_outputs/*
 uploads/*
 !uploads/.gitkeep
+
+# Local coursework / notes not part of the app
+ml_notebook_requirements.txt
+ml_notebook_solution.ipynb
+viva_prep_ml_scaling.md

@@ -24,9 +24,8 @@
     Local AI Media Platform
   </text>
   <text x="640" y="282" text-anchor="middle" fill="#9ac0d5" font-size="28" font-family="Space Grotesk, Arial, sans-serif">
-    Add docs/assets/demo.mp4 to show your walkthrough
+    Dockerized prompt-to-video and timeline editing stack
   </text>
   <rect x="520" y="305" width="240" height="70" rx="10" fill="url(#accent)"/>
-  <polygon points="615,321 615,359 652,340" fill="#06231f"/>
-  <text x="690" y="347" fill="#06231f" font-size="24" font-family="Space Grotesk, Arial, sans-serif">Play Demo</text>
+  <text x="640" y="348" text-anchor="middle" fill="#06231f" font-size="24" font-family="Space Grotesk, Arial, sans-serif">Run Locally</text>
 </svg>

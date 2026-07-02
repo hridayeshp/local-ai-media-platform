@@ -1,5 +1,4 @@
 # Demo Assets
 
-- Optional: add `demo.mp4` in this folder.
-- If present, the GitHub Pages site will show it in the "Quick Demo Video" section.
-- Keep the file reasonably small so page load stays fast.
+- `demo-poster.svg` is the static project preview used by the GitHub Pages site.
+- If you later add a walkthrough video, keep it reasonably small so the page stays fast.

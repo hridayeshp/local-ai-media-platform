@@ -2,14 +2,24 @@
 
 Hybrid media generation platform with a static web frontend, a FastAPI backend, and a Stable Diffusion worker.
 
+**Live project page:** https://hridayeshp.github.io/local-ai-media-platform/
+
+**Repository:** https://github.com/hridayeshp/local-ai-media-platform
+
+## Current Status
+
+- Docker stack builds and runs with `frontend`, `backend`, and `sd-host` healthy.
+- Prompt-to-video jobs complete and download as H.264/AAC MP4 files.
+- Editor uploads, captioned timeline export, and export downloads are verified.
+- GitHub Pages project page is live and linked above for visitors.
+
 ## Live Demo Site
 
-- A GitHub Pages demo site is included under `docs/`.
-- After pushing to `main`, GitHub Actions deploys it via `.github/workflows/pages.yml`.
+- A GitHub Pages project page is included under `docs/`.
+- GitHub Actions deploys it via `.github/workflows/pages.yml` after changes are pushed to `main`.
 - Enable Pages in repo settings if needed:
   - `Settings -> Pages -> Build and deployment -> Source: GitHub Actions`
-- Live URL (after deployment): `https://hridayeshp.github.io/local-ai-media-platform/`
-- Add `docs/assets/demo.mp4` to show a real walkthrough video on the live page.
+- Live URL: `https://hridayeshp.github.io/local-ai-media-platform/`
 
 ## Project Structure
 

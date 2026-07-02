@@ -11,14 +11,13 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="bg-shape bg-shape-a"></div>
-  <div class="bg-shape bg-shape-b"></div>
   <main class="page">
     <section class="hero">
-      <p class="eyebrow">GitHub Pages Demo</p>
+      <p class="eyebrow">Open Source AI Media Studio</p>
       <h1>Local AI Media Platform</h1>
       <p class="subtitle">
-        Prompt-to-video generation, voiceover, and an interactive multi-track timeline editor.
+        A Dockerized FastAPI, nginx, and Stable Diffusion stack for prompt-to-video generation,
+        local narration fallback, and multi-track MP4 timeline export.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="https://github.com/hridayeshp/local-ai-media-platform">View Repository</a>
@@ -28,29 +27,28 @@
     </section>
 
     <section class="card">
-      <h2>Quick Demo Video</h2>
+      <h2>Project Preview</h2>
       <p>
-        Add your own screen recording at <code>docs/assets/demo.mp4</code> to show the real app flow on this page.
+        This static page gives visitors the project overview. The full generation and editor
+        experience runs locally through Docker.
       </p>
-      <video controls playsinline poster="./assets/demo-poster.svg">
-        <source src="./assets/demo.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <img class="preview" src="./assets/demo-poster.svg" alt="Local AI Media Platform interface preview" />
     </section>
 
     <section class="grid">
       <article class="card">
-        <h3>What This Live Page Shows</h3>
+        <h3>What Is Included</h3>
         <ul>
-          <li>Project overview for visitors</li>
-          <li>Feature highlights (Phase 1 to Phase 3)</li>
-          <li>How to run the full app locally</li>
+          <li>FastAPI backend with job queue and editor APIs</li>
+          <li>Static frontend served by nginx with <code>/api</code> proxying</li>
+          <li>Stable Diffusion worker with a fast smoke-test mode</li>
         </ul>
       </article>
       <article class="card">
-        <h3>Important Limitation</h3>
+        <h3>Verified Workflow</h3>
         <p>
-          GitHub Pages is static hosting only. The actual AI generation and editing backend still runs locally or on cloud infrastructure.
+          The Docker stack builds, health checks pass, prompt-to-video jobs complete, and
+          captioned editor exports download as MP4.
         </p>
       </article>
     </section>
@@ -72,9 +70,14 @@
 
     <section class="card">
       <h2>Run Locally</h2>
-      <pre><code id="runCmd">cd /Users/hridayeshpandit/Coding/local-ai-media-platform
+      <pre><code id="runCmd">git clone https://github.com/hridayeshp/local-ai-media-platform.git
+cd local-ai-media-platform
 docker compose up --build -d
 # open http://localhost</code></pre>
+      <p class="note">
+        Use <code>SD_MOCK=true docker compose up --build -d</code> for a quick full-stack smoke test
+        without downloading Stable Diffusion weights.
+      </p>
     </section>
   </main>
   <script src="./app.js"></script>
